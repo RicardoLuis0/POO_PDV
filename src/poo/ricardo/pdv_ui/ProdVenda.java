@@ -1,30 +1,29 @@
 package poo.ricardo.pdv_ui;
 
-import poo.ricardo.pdv_ui.utils.Stringable;
+import poo.ricardo.pdv_ui.utils.Produto;
 
-public class ProdVenda implements Stringable{
-	private String name;
-	private int key;
-	private int amt;
-	ProdVenda(int key,String name){
-		this(key,name,1);
+public class ProdVenda extends Produto{
+
+	protected int amt;
+	
+	public ProdVenda(Produto p){
+		this(p,1);
 	}
-	ProdVenda(int key,String name,int amt){
-		this.key=key;
-		this.name=name;
+	
+	public ProdVenda(Produto p,int amt){
+		super(p);
 		this.amt=amt;
 	}
-
+	
 	@Override
-	public String getString() {
-		return name+" x"+amt;
+	public String toString() {
+		return nome+" R$ "+String.format("%.2f",preco)+" x"+amt+" = R$ "+String.format("%.2f",(preco*amt));
 	}
-	public int getKey() {
-		return key;
-	}
+	
 	public int getAmt() {
 		return amt;
 	}
+	
 	public void setAmt(int val) {
 		amt=val;
 	}

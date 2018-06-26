@@ -7,32 +7,34 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import poo.ricardo.pdv_ui.PanelVenda;
-import poo.ricardo.pdv_ui.utils.ClientCallOnCancel;
-import poo.ricardo.pdv_ui.utils.ClientCallOnConfirm;
+import poo.ricardo.pdv_ui.utils.CallOnCancel;
+import poo.ricardo.pdv_ui.utils.CallOnConfirm;
 import poo.ricardo.pdv_ui.utils.Cliente;
-import poo.ricardo.pdv_ui.utils.StringableListModel;
+import poo.ricardo.pdv_ui.utils.MyListModel;
 
 public class ClientPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
 	private final PanelVenda parent;
-	private JList<String> listaClientes = null;
+	private JList<Cliente> listaClientes = null;
 	private JScrollPane scroll = null;
 	private JPanel scrollfill = null;
 	private JButton confirmar = null;
 	private JButton cancelar = null;
-	StringableListModel lmodel = null;
+	MyListModel<Cliente> lmodel = null;
 
-	public ClientPanel(PanelVenda p,ClientCallOnConfirm call_confirm,ClientCallOnCancel call_cancel){
+	public ClientPanel(PanelVenda p,CallOnConfirm call_confirm,CallOnCancel call_cancel){
 		super();
+		parent=p;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		scrollfill = new JPanel(new BorderLayout());
-		parent=p;
 		confirmar = new JButton("Confirmar");
 		cancelar = new JButton("Cancelar");
-				
-		refreshJList();
+		
+		lmodel = new MyListModel<Cliente>();
+		lmodel.replaceData(parent.get_parent().getBanco().getListaClientes());
+		listaClientes = new JList<Cliente>(lmodel);
 
 		scroll = new JScrollPane(listaClientes);
 		
@@ -41,7 +43,7 @@ public class ClientPanel extends JPanel {
 		add(confirmar);
 		add(cancelar);
 		confirmar.addActionListener(a->{
-			call_confirm.confirm((Cliente)lmodel.getAt(listaClientes.getSelectedIndex()));
+			call_confirm.confirm((Cliente)lmodel.getElementAt(listaClientes.getSelectedIndex()));
 		});
 		cancelar.addActionListener(a->{
 			call_cancel.cancel();
@@ -49,10 +51,13 @@ public class ClientPanel extends JPanel {
 	}
 
 	private void refreshJList() {
-		lmodel = new StringableListModel(parent.get_parent().getBanco().getListaClientes());
-		listaClientes = new JList<String>(lmodel);
+		lmodel.replaceData(parent.get_parent().getBanco().getListaClientes());
 	}
 	public String getTabName() {
 		return "Cliente";
 	}
+	public void Novo() {
+		refreshJList();
+	}
+
 }

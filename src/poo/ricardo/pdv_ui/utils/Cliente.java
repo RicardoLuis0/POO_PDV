@@ -1,6 +1,6 @@
 package poo.ricardo.pdv_ui.utils;
 
-public class Cliente implements Stringable{
+public class Cliente{
 	public String codigo;
 	public String name;
 	public Cliente(String cod,String n) {
@@ -8,7 +8,7 @@ public class Cliente implements Stringable{
 		name=n;
 	}
 	@Override
-	public String getString() {
+	public String toString() {
 		return name;
 	}
 	
