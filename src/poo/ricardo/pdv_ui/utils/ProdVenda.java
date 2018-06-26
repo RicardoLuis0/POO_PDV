@@ -1,6 +1,4 @@
-package poo.ricardo.pdv_ui;
-
-import poo.ricardo.pdv_ui.utils.Produto;
+package poo.ricardo.pdv_ui.utils;
 
 public class ProdVenda extends Produto{
 
@@ -26,5 +24,9 @@ public class ProdVenda extends Produto{
 	
 	public void setAmt(int val) {
 		amt=val;
+	}
+	
+	public double getTotal() {
+		return preco*amt;
 	}
 }

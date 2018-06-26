@@ -1,7 +1,6 @@
 package poo.ricardo.pdv_ui.tabs;
 
 import java.awt.BorderLayout;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -11,16 +10,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import poo.ricardo.pdv_ui.PanelVenda;
-import poo.ricardo.pdv_ui.ProdVenda;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
 import poo.ricardo.pdv_ui.utils.MyListModel;
+import poo.ricardo.pdv_ui.utils.ProdVenda;
 import poo.ricardo.pdv_ui.utils.Produto;
 
 public class ProdutoPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final PanelVenda parent;
+	private final VendaPanel parent;
 	private JScrollPane scroll = null;
 	private JPanel scrollfill = null;
 	private JPanel menupanel=null;
@@ -31,7 +29,7 @@ public class ProdutoPanel extends JPanel {
 	MyListModel<Produto> data = null;
 	JList<Produto> listaProdutos = null;
 
-	public ProdutoPanel(PanelVenda p,CallOnConfirm call_confirm,CallOnCancel call_cancel){
+	public ProdutoPanel(VendaPanel p,CallOnConfirm call_confirm,CallOnCancel call_cancel){
 		super();
 		parent=p;
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -49,15 +47,16 @@ public class ProdutoPanel extends JPanel {
 		menupanel.setLayout(new BoxLayout(menupanel, BoxLayout.Y_AXIS));
 		add(scrollfill);
 		add(menupanel);
+		
 		menupanel.add(amt_spinner);
 		menupanel.add(confirmar);
 		menupanel.add(cancelar);
 		menupanel.add(Box.createVerticalGlue());
 		
 		confirmar.addActionListener(a->{
-			Produto prodtemp=(Produto)data.getElementAt(listaProdutos.getSelectedIndex());
-			if(prodtemp!=null) {
-				call_confirm.confirm(new ProdVenda(prodtemp ,((Number)amt_spinner.getValue()).intValue()));
+			int index=listaProdutos.getSelectedIndex();
+			if(index>=0) {
+				call_confirm.confirm(new ProdVenda((Produto)data.getElementAt(index),((Number)amt_spinner.getValue()).intValue()));
 			}
 		});
 		cancelar.addActionListener(a->{
@@ -90,6 +89,6 @@ public class ProdutoPanel extends JPanel {
 	public void Novo() {
 		refreshJList();
 		listaProdutos.clearSelection();
-		spinner_model.setValue(0);
+		spinner_model.setValue(1);
 	}
 }

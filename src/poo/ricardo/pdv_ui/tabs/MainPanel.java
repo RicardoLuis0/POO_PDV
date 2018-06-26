@@ -1,4 +1,4 @@
-package poo.ricardo.pdv_ui.panel;
+package poo.ricardo.pdv_ui.tabs;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;

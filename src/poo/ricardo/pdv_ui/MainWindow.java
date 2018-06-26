@@ -8,8 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import poo.ricardo.pdv_ui.menu.MainMenu;
-import poo.ricardo.pdv_ui.panel.LoginScreen;
-import poo.ricardo.pdv_ui.panel.MainPanel;
+import poo.ricardo.pdv_ui.tabs.LoginPanel;
+import poo.ricardo.pdv_ui.tabs.MainPanel;
+import poo.ricardo.pdv_ui.tabs.VendaPanel;
 import poo.ricardo.pdv_ui.utils.AcessoBanco;
 import poo.ricardo.pdv_ui.utils.BancoTeste;
 
@@ -23,8 +24,8 @@ public class MainWindow extends JFrame {
 	private MainPanel mainPanel = null;
 	private CardLayout loginSwitcherLayout = null;
 	private CardLayout mainSwitcherLayout = null;
-	private LoginScreen loginscreen = null;
-	private PanelVenda panelvenda = null;
+	private LoginPanel loginscreen = null;
+	private VendaPanel panelvenda = null;
 	private AcessoBanco banco = null;
 
 	public MainWindow() {
@@ -44,9 +45,9 @@ public class MainWindow extends JFrame {
 		menu = new MainMenu(this);
 		add(menu,BorderLayout.NORTH);
 
-		panelvenda = new PanelVenda(this);
+		panelvenda = new VendaPanel(this);
 		
-		loginscreen = new LoginScreen(this);
+		loginscreen = new LoginPanel(this);
 		
 		loginSwitcher = new JPanel(new CardLayout());
 		loginSwitcherLayout = (CardLayout) loginSwitcher.getLayout();

@@ -1,4 +1,4 @@
-package poo.ricardo.pdv_ui;
+package poo.ricardo.pdv_ui.tabs;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -11,17 +11,16 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import poo.ricardo.pdv_ui.tabs.ClientPanel;
-import poo.ricardo.pdv_ui.tabs.ProdutoPanel;
 import poo.ricardo.pdv_ui.utils.Cliente;
 import poo.ricardo.pdv_ui.utils.MyListModel;
+import poo.ricardo.pdv_ui.utils.ProdVenda;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
+import poo.ricardo.pdv_ui.MainWindow;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
 
-public class PanelVenda extends JPanel {
+public class VendaPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final MainWindow parent;
-	private DadosVenda dados = null;
 	private CardLayout mainlayout=null;
 	private JPanel panelvenda = null;
 	private JPanel topmenu = null;
@@ -42,6 +41,8 @@ public class PanelVenda extends JPanel {
 	private ClientPanel clientpanel=null;
 	private ProdutoPanel produtopanel=null;
 	private Cliente cliente=null;
+	private JLabel totallabel=null;
+	private JButton resetcliente=null;
 	
 	MyListModel<ProdVenda> data=null;
 	
@@ -50,7 +51,7 @@ public class PanelVenda extends JPanel {
 	int prodmode=0;
 	int prodind=0;
 	
-	public PanelVenda(MainWindow p) {
+	public VendaPanel(MainWindow p) {
 		mainlayout=new CardLayout();
 		setLayout(mainlayout);
 		parent=p;
@@ -117,6 +118,8 @@ public class PanelVenda extends JPanel {
 		clientelabel=new JLabel("Sem Cliente");
 		clientelabel.setHorizontalAlignment(JLabel.CENTER);
 
+		totallabel=new JLabel("");
+		updateTotal();
 		
 		mainpanelright.add(clientelabel);
 		
@@ -129,11 +132,6 @@ public class PanelVenda extends JPanel {
 		mainpanelleft.add(bottommenu);
 		
 		
-		cancelar = new JButton("Cancelar Venda");
-		bottommenu.add(cancelar);
-		cancelar.addActionListener((a)->{
-			cancelarVenda();
-		});
 
 		addproduto=new JButton("Adicionar Produto");
 		addproduto.addActionListener(a->{
@@ -144,7 +142,7 @@ public class PanelVenda extends JPanel {
 		
 		removeproduto=new JButton("Remover Produto");
 		removeproduto.addActionListener(a->{
-			
+			removeProduto();
 		});
 		
 		editproduto=new JButton("Editar Produto");
@@ -167,30 +165,53 @@ public class PanelVenda extends JPanel {
 		selectcliente=new JButton ("Selecionar Cliente");
 		selectcliente.addActionListener(a->{
 			switchPanel("Cliente");
-			clientpanel.Novo();
+			if(cliente==null) {
+				clientpanel.Novo();
+			}else {
+				clientpanel.Editar(cliente.getCodigo());
+			}
+		});
+		
+		resetcliente=new JButton("Remover Cliente");
+		resetcliente.addActionListener(a->{
+			if(cliente!=null) {
+				cliente=null;
+				clientelabel.setText("Sem Cliente");
+			}
 		});
 		
 		mainpanelright.add(selectcliente);
+		mainpanelright.add(resetcliente);
 		
 		bottommenu.add(Box.createRigidArea(new Dimension(10,0)));
 		
+
+		cancelar = new JButton("Cancelar Venda");
+		bottommenu.add(cancelar);
+		cancelar.addActionListener((a)->{
+			cancelarVenda();
+		});
 		
 		finalizarvenda=new JButton ("Finalizar Venda");
 		bottommenu.add(finalizarvenda);
+
+		mainpanelright.add(Box.createVerticalGlue());
 		
-		
+		mainpanelright.add(totallabel);
 		
 		//bottommenu.add(Box.createHorizontalGlue());
 		//mainpanelleftbottom.add(Box.createHorizontalGlue());
 		mainpanelright.add(Box.createVerticalGlue());
 	}
-	
-	/*
-	private void refreshJList() {
-		this.revalidate();
-		this.repaint();
+
+	public void updateTotal() {
+		double total=0;
+		for(Object o : data.toArray()) {
+			ProdVenda p=(ProdVenda)o;
+			total+=p.getTotal();
+		}
+		totallabel.setText("R$ "+String.format("%.2f",total));
 	}
-	*/
 	
 	public void confirmarCliente(Cliente c) {
 		if(c!=null) {
@@ -200,14 +221,21 @@ public class PanelVenda extends JPanel {
 		sairCliente();
 	}
 	
+	public void removeProduto() {
+		int index=listaprod.getSelectedIndex();
+		if(index!=-1) {
+			data.remove(index);
+		}
+	}
+	
 	public void confirmarProduto(ProdVenda p) {
 		if(p!=null) {
 			if(prodmode==0) {
-				System.out.println(p.toString());
 				data.addElement(p);
-				System.out.println(data.getSize());
+				updateTotal();
 			}else if(prodmode==1) {
 				data.set(prodind, p);
+				updateTotal();
 			}
 		}
 		sairProduto();
@@ -222,17 +250,15 @@ public class PanelVenda extends JPanel {
 	}
 	
 	public void iniciarVenda() {
-		dados = new DadosVenda();
+		cliente=null;
+		clientelabel.setText("Sem Cliente");
+		data.clear();
 	}
 	
 	public void cancelarVenda() {
-		dados=null;
 		parent.sairVenda();
 	}
 
-	public DadosVenda getDados() {
-		return dados;
-	}
 
 	public MainWindow get_parent() {
 		return parent;
