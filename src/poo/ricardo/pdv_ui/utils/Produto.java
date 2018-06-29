@@ -1,10 +1,10 @@
 package poo.ricardo.pdv_ui.utils;
 
 public class Produto{
-	protected String codigo;
+	protected int codigo;
 	protected String nome;
 	protected double preco;
-	public String getCodigo() {
+	public int getCodigo() {
 		return codigo;
 	}
 	public String getNome() {
@@ -13,7 +13,7 @@ public class Produto{
 	public double getPreco() {
 		return preco;
 	}
-	public Produto(String cod,String n,double p) {
+	public Produto(int cod,String n,double p) {
 		codigo=cod;
 		preco=p;
 		nome=n;

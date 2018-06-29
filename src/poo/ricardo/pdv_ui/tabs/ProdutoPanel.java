@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import poo.ricardo.pdv_ui.utils.AcessoBanco;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
 import poo.ricardo.pdv_ui.utils.MyListModel;
@@ -18,7 +19,6 @@ import poo.ricardo.pdv_ui.utils.Produto;
 
 public class ProdutoPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final VendaPanel parent;
 	private JScrollPane scroll = null;
 	private JPanel scrollfill = null;
 	private JPanel menupanel=null;
@@ -28,16 +28,17 @@ public class ProdutoPanel extends JPanel {
 	private SpinnerNumberModel spinner_model = null;
 	MyListModel<Produto> data = null;
 	JList<Produto> listaProdutos = null;
+	AcessoBanco banco;
 
-	public ProdutoPanel(VendaPanel p,CallOnConfirm call_confirm,CallOnCancel call_cancel){
+	public ProdutoPanel(AcessoBanco banco,CallOnConfirm call_confirm,CallOnCancel call_cancel){
 		super();
-		parent=p;
+		this.banco=banco;
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		scrollfill = new JPanel(new BorderLayout());
 		confirmar = new JButton("Confirmar");
 		cancelar = new JButton("Cancelar");
 		data = new MyListModel<Produto>();
-		data.replaceData(parent.get_parent().getBanco().getListaProdutos());
+		refreshJList();
 		listaProdutos = new JList<Produto>(data);
 		spinner_model=new SpinnerNumberModel(1, 1, 999, 1);
 		amt_spinner=new JSpinner(spinner_model);
@@ -64,12 +65,12 @@ public class ProdutoPanel extends JPanel {
 		});
 	}
 	private void refreshJList() {
-		data.replaceData(parent.get_parent().getBanco().getListaProdutos());
+		data.replaceData(banco.getListaProdutos());
 	}
 	public String getTabName() {
 		return "Produtos";
 	}
-	public void Editar(String cod,int amt) {
+	public void Editar(int cod,int amt) {
 		refreshJList();
 		int codindex=-1;
 		for(int i=0;i<data.getSize();i++) {
@@ -91,4 +92,5 @@ public class ProdutoPanel extends JPanel {
 		listaProdutos.clearSelection();
 		spinner_model.setValue(1);
 	}
+
 }

@@ -13,4 +13,10 @@ public class MyListModel<T> extends DefaultListModel<T> {
 			addElement(s);
 		}
 	}
+	public List<T> getList(List<T> list){
+		for(int i=0;i<getSize();i++) {
+			list.add(getElementAt(i));
+		}
+		return list;
+	}
 }

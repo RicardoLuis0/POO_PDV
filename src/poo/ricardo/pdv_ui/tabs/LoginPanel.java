@@ -1,8 +1,6 @@
 package poo.ricardo.pdv_ui.tabs;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
+import java.awt.BorderLayout;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,15 +10,16 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import poo.ricardo.pdv_ui.MainWindow;
+import poo.ricardo.pdv_ui.utils.LoginData;
 
 public class LoginPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
-	private final MainWindow parent;
 	private JTextField login=null;
 	private JPasswordField password=null;
 	private JButton confirm=null;
-	public LoginPanel(MainWindow p) {
-		super(new GridBagLayout());
+	
+	public LoginPanel(MainWindow mw) {
+		super(new BorderLayout());
 		JPanel panel1 = new JPanel();
 		panel1.setLayout(new BoxLayout(panel1,BoxLayout.X_AXIS));
 		JPanel panel2 = new JPanel();
@@ -29,8 +28,7 @@ public class LoginPanel extends JPanel{
 		panel3.setLayout(new BoxLayout(panel3,BoxLayout.X_AXIS));
 		JPanel panel4 = new JPanel();
 		panel4.setLayout(new BoxLayout(panel4,BoxLayout.X_AXIS));
-		parent = p;
-
+		
 		login = new JTextField(30);
 		password = new JPasswordField(30);
 		confirm = new JButton("Fazer Login");
@@ -49,10 +47,22 @@ public class LoginPanel extends JPanel{
 		panel4.add(password);
 		panel2.add(confirm);
 		panel2.add(Box.createVerticalGlue());
-		add(panel1,new GridBagConstraints());
+		add(panel1,BorderLayout.CENTER);
 		
 		confirm.addActionListener((a)->{
-			parent.login();
+			mw.login();
 		});
+	}
+	
+	public LoginData getData() {
+		LoginData d=new LoginData();
+		d.login=login.getText();
+		d.pass=new String(password.getPassword());
+		return d;
+	}
+	
+	public void clear() {
+		login.setText("");
+		password.setText("");
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -13,6 +14,8 @@ import poo.ricardo.pdv_ui.tabs.MainPanel;
 import poo.ricardo.pdv_ui.tabs.VendaPanel;
 import poo.ricardo.pdv_ui.utils.AcessoBanco;
 import poo.ricardo.pdv_ui.utils.BancoTeste;
+import poo.ricardo.pdv_ui.utils.CallOnCancel;
+import poo.ricardo.pdv_ui.utils.LoginData;
 
 public class MainWindow extends JFrame {
 
@@ -45,7 +48,13 @@ public class MainWindow extends JFrame {
 		menu = new MainMenu(this);
 		add(menu,BorderLayout.NORTH);
 
-		panelvenda = new VendaPanel(this);
+		panelvenda = new VendaPanel(banco,new CallOnCancel(){
+
+			@Override
+			public void cancel() {
+				sairVenda();
+			}
+		});
 		
 		loginscreen = new LoginPanel(this);
 		
@@ -69,8 +78,14 @@ public class MainWindow extends JFrame {
 	}
 
 	public void login() {
-		menu.login();
-		loginSwitcherLayout.show(loginSwitcher, "Main");
+		LoginData d=loginscreen.getData();
+		loginscreen.clear();
+		if(banco.testLogin(d)) {
+			menu.login();
+			loginSwitcherLayout.show(loginSwitcher, "Main");
+		}else {
+			JOptionPane.showMessageDialog(this, "Login ou Senha errados", "Erro Ao Logar", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void logoff() {

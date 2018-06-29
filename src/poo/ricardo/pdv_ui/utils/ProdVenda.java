@@ -15,7 +15,7 @@ public class ProdVenda extends Produto{
 	
 	@Override
 	public String toString() {
-		return nome+" R$ "+String.format("%.2f",preco)+" x"+amt+" = R$ "+String.format("%.2f",(preco*amt));
+		return super.toString()+" x"+amt+" = R$ "+String.format("%.2f",(preco*amt));
 	}
 	
 	public int getAmt() {

@@ -7,6 +7,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import poo.ricardo.pdv_ui.utils.AcessoBanco;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
 import poo.ricardo.pdv_ui.utils.Cliente;
@@ -16,24 +17,24 @@ public class ClientPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final VendaPanel parent;
 	private JList<Cliente> listaClientes = null;
 	private JScrollPane scroll = null;
 	private JPanel scrollfill = null;
 	private JButton confirmar = null;
 	private JButton cancelar = null;
 	MyListModel<Cliente> data = null;
+	AcessoBanco banco=null;
 
-	public ClientPanel(VendaPanel p,CallOnConfirm call_confirm,CallOnCancel call_cancel){
+	public ClientPanel(AcessoBanco banco,CallOnConfirm call_confirm,CallOnCancel call_cancel){
 		super();
-		parent=p;
+		this.banco=banco;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		scrollfill = new JPanel(new BorderLayout());
 		confirmar = new JButton("Confirmar");
 		cancelar = new JButton("Cancelar");
 		
 		data = new MyListModel<Cliente>();
-		data.replaceData(parent.get_parent().getBanco().getListaClientes());
+		refreshJList();
 		listaClientes = new JList<Cliente>(data);
 
 		scroll = new JScrollPane(listaClientes);
@@ -54,7 +55,7 @@ public class ClientPanel extends JPanel {
 	}
 
 	private void refreshJList() {
-		data.replaceData(parent.get_parent().getBanco().getListaClientes());
+		data.replaceData(banco.getListaClientes());
 	}
 	public String getTabName() {
 		return "Cliente";

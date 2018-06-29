@@ -2,6 +2,7 @@ package poo.ricardo.pdv_ui.tabs;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,12 +16,11 @@ import poo.ricardo.pdv_ui.utils.Cliente;
 import poo.ricardo.pdv_ui.utils.MyListModel;
 import poo.ricardo.pdv_ui.utils.ProdVenda;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
-import poo.ricardo.pdv_ui.MainWindow;
+import poo.ricardo.pdv_ui.utils.AcessoBanco;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
 
 public class VendaPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final MainWindow parent;
 	private CardLayout mainlayout=null;
 	private JPanel panelvenda = null;
 	private JPanel topmenu = null;
@@ -43,6 +43,9 @@ public class VendaPanel extends JPanel {
 	private Cliente cliente=null;
 	private JLabel totallabel=null;
 	private JButton resetcliente=null;
+	private FinalVendaPanel finalvendapanel=null;
+	
+	private AcessoBanco banco;
 	
 	MyListModel<ProdVenda> data=null;
 	
@@ -51,10 +54,13 @@ public class VendaPanel extends JPanel {
 	int prodmode=0;
 	int prodind=0;
 	
-	public VendaPanel(MainWindow p) {
+	CallOnCancel call_cancel=null;
+	
+	public VendaPanel(AcessoBanco ba,CallOnCancel ca) {
+		banco=ba;
+		call_cancel=ca;
 		mainlayout=new CardLayout();
 		setLayout(mainlayout);
-		parent=p;
 		panelvenda=new JPanel();
 		panelvenda.setLayout(new BoxLayout(panelvenda, BoxLayout.Y_AXIS));
 		topmenu = new JPanel();
@@ -63,7 +69,7 @@ public class VendaPanel extends JPanel {
 		
 		add(panelvenda,"Venda");
 		
-		clientpanel=new ClientPanel(this,new CallOnConfirm() {
+		clientpanel=new ClientPanel(banco,new CallOnConfirm() {
 			@Override
 			public void confirm(Object c) {
 				confirmarCliente((Cliente)c);
@@ -77,7 +83,7 @@ public class VendaPanel extends JPanel {
 		
 		add(clientpanel,"Cliente");
 		
-		produtopanel= new ProdutoPanel(this, new CallOnConfirm() {
+		produtopanel= new ProdutoPanel(banco,new CallOnConfirm() {
 			@Override
 			public void confirm(Object p) {
 				confirmarProduto((ProdVenda)p);
@@ -89,6 +95,24 @@ public class VendaPanel extends JPanel {
 		});
 		
 		add(produtopanel,"Produto");
+		
+		finalvendapanel=new FinalVendaPanel(banco,new CallOnConfirm() {
+
+			@Override
+			public void confirm(Object data) {
+				call_cancel.cancel();
+			}
+			
+		},new CallOnCancel() {
+
+			@Override
+			public void cancel() {
+				switchPanel("Venda");
+			}
+			
+		});
+		
+		add(finalvendapanel,"Final");
 		
 		mainpanel=new JPanel();
 		mainpanelleft=new JPanel();
@@ -193,14 +217,19 @@ public class VendaPanel extends JPanel {
 		});
 		
 		finalizarvenda=new JButton ("Finalizar Venda");
+		
+		finalizarvenda.addActionListener(a->{
+			switchPanel("Final");
+			finalvendapanel.Novo(cliente, data.getList(new ArrayList<ProdVenda>()));
+		});
+		
+		
 		bottommenu.add(finalizarvenda);
 
 		mainpanelright.add(Box.createVerticalGlue());
 		
 		mainpanelright.add(totallabel);
 		
-		//bottommenu.add(Box.createHorizontalGlue());
-		//mainpanelleftbottom.add(Box.createHorizontalGlue());
 		mainpanelright.add(Box.createVerticalGlue());
 	}
 
@@ -253,15 +282,11 @@ public class VendaPanel extends JPanel {
 		cliente=null;
 		clientelabel.setText("Sem Cliente");
 		data.clear();
+		switchPanel("Venda");
 	}
 	
 	public void cancelarVenda() {
-		parent.sairVenda();
-	}
-
-
-	public MainWindow get_parent() {
-		return parent;
+		call_cancel.cancel();
 	}
 	
 	public void switchPanel(String newpanel) {
