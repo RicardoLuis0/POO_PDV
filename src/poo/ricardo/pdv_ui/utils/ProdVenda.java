@@ -15,7 +15,7 @@ public class ProdVenda extends Produto{
 	
 	@Override
 	public String toString() {
-		return super.toString()+" x"+amt+" = R$ "+String.format("%.2f",(preco*amt));
+		return super.toString()+" x"+amt+" = R$ "+String.format("%.2f",(getPreco()*amt));
 	}
 	
 	public int getAmt() {
@@ -27,6 +27,6 @@ public class ProdVenda extends Produto{
 	}
 	
 	public double getTotal() {
-		return preco*amt;
+		return getPreco()*amt;
 	}
 }

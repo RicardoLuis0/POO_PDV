@@ -12,7 +12,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import poo.ricardo.pdv_ui.utils.Cliente;
 import poo.ricardo.pdv_ui.utils.MyListModel;
 import poo.ricardo.pdv_ui.utils.ProdVenda;
 import poo.ricardo.pdv_ui.utils.CallOnConfirm;
@@ -25,10 +24,7 @@ public class VendaPanel extends JPanel {
 	private JPanel panelvenda = null;
 	private JPanel topmenu = null;
 	private JPanel mainpanel=null;
-	private JPanel mainpanelleft=null;
-	private JPanel mainpanelright=null;
-	private JPanel mainpanellefttop=null;
-	private JPanel mainpanelleftbottom=null;
+	private JPanel mainpanelbottom=null;
 	private JPanel bottommenu = null;
 	private JList<ProdVenda> listaprod = null;
 	private JScrollPane listaprodscroll=null;
@@ -36,20 +32,14 @@ public class VendaPanel extends JPanel {
 	private JButton addproduto = null;
 	private JButton editproduto = null;
 	private JButton removeproduto = null;
-	private JButton selectcliente=null;
 	private JButton finalizarvenda=null;
-	private ClientPanel clientpanel=null;
 	private ProdutoPanel produtopanel=null;
-	private Cliente cliente=null;
 	private JLabel totallabel=null;
-	private JButton resetcliente=null;
 	private FinalVendaPanel finalvendapanel=null;
 	
 	private AcessoBanco banco;
 	
 	MyListModel<ProdVenda> data=null;
-	
-	private JLabel clientelabel=null;
 	
 	int prodmode=0;
 	int prodind=0;
@@ -68,20 +58,6 @@ public class VendaPanel extends JPanel {
 		panelvenda.add(topmenu);
 		
 		add(panelvenda,"Venda");
-		
-		clientpanel=new ClientPanel(banco,new CallOnConfirm() {
-			@Override
-			public void confirm(Object c) {
-				confirmarCliente((Cliente)c);
-			}
-		},new CallOnCancel() {
-			@Override
-			public void cancel() {
-				sairCliente();
-			}
-		});
-		
-		add(clientpanel,"Cliente");
 		
 		produtopanel= new ProdutoPanel(banco,new CallOnConfirm() {
 			@Override
@@ -115,45 +91,35 @@ public class VendaPanel extends JPanel {
 		add(finalvendapanel,"Final");
 		
 		mainpanel=new JPanel();
-		mainpanelleft=new JPanel();
-		mainpanelright=new JPanel();
-		mainpanellefttop=new JPanel();
-		mainpanelleftbottom=new JPanel();
+		mainpanelbottom=new JPanel();
 		
-		mainpanel.setLayout(new BoxLayout(mainpanel, BoxLayout.X_AXIS));
-		mainpanelleft.setLayout(new BoxLayout(mainpanelleft, BoxLayout.Y_AXIS));
-		mainpanellefttop.setLayout(new BoxLayout(mainpanellefttop, BoxLayout.X_AXIS));
-		mainpanelleftbottom.setLayout(new BoxLayout(mainpanelleftbottom, BoxLayout.X_AXIS));
-		mainpanelright.setLayout(new BoxLayout(mainpanelright, BoxLayout.Y_AXIS));
+		mainpanel.setLayout(new BoxLayout(mainpanel, BoxLayout.Y_AXIS));
+		mainpanelbottom.setLayout(new BoxLayout(mainpanelbottom, BoxLayout.X_AXIS));
 		
 		
-		mainpanel.add(mainpanelleft);
-		mainpanel.add(mainpanelright);
-		mainpanelleft.add(mainpanellefttop);
-		mainpanelleft.add(mainpanelleftbottom);
+		
 		
 		panelvenda.add(mainpanel);
 		data= new MyListModel<ProdVenda>();
 		listaprod=new JList<ProdVenda>(data);
 		listaprodscroll=new JScrollPane(listaprod);
 		
-		mainpanellefttop.add(listaprodscroll);
-		
-		clientelabel=new JLabel("Sem Cliente");
-		clientelabel.setHorizontalAlignment(JLabel.CENTER);
+		mainpanel.add(listaprodscroll);
 
+		totallabel=new JLabel();
+		updateTotal();
+		mainpanel.add(totallabel);
+		
 		totallabel=new JLabel("");
 		updateTotal();
-		
-		mainpanelright.add(clientelabel);
 		
 		bottommenu = new JPanel();
 		bottommenu.setLayout(new BoxLayout(bottommenu, BoxLayout.X_AXIS));
 		
-		mainpanelleft.add(Box.createRigidArea(new Dimension(0,10)));
+		mainpanel.add(Box.createRigidArea(new Dimension(0,10)));
 		
-		
-		mainpanelleft.add(bottommenu);
+		mainpanel.add(mainpanelbottom);
+		mainpanel.add(bottommenu);
 		
 		
 
@@ -180,32 +146,11 @@ public class VendaPanel extends JPanel {
 			}
 		});
 
-		mainpanelleftbottom.add(addproduto);
-		mainpanelleftbottom.add(Box.createRigidArea(new Dimension(10,0)));
-		mainpanelleftbottom.add(editproduto);
-		mainpanelleftbottom.add(Box.createRigidArea(new Dimension(10,0)));
-		mainpanelleftbottom.add(removeproduto);
-		
-		selectcliente=new JButton ("Selecionar Cliente");
-		selectcliente.addActionListener(a->{
-			switchPanel("Cliente");
-			if(cliente==null) {
-				clientpanel.Novo();
-			}else {
-				clientpanel.Editar(cliente.getCodigo());
-			}
-		});
-		
-		resetcliente=new JButton("Remover Cliente");
-		resetcliente.addActionListener(a->{
-			if(cliente!=null) {
-				cliente=null;
-				clientelabel.setText("Sem Cliente");
-			}
-		});
-		
-		mainpanelright.add(selectcliente);
-		mainpanelright.add(resetcliente);
+		mainpanelbottom.add(addproduto);
+		mainpanelbottom.add(Box.createRigidArea(new Dimension(10,0)));
+		mainpanelbottom.add(editproduto);
+		mainpanelbottom.add(Box.createRigidArea(new Dimension(10,0)));
+		mainpanelbottom.add(removeproduto);
 		
 		bottommenu.add(Box.createRigidArea(new Dimension(10,0)));
 		
@@ -220,17 +165,13 @@ public class VendaPanel extends JPanel {
 		
 		finalizarvenda.addActionListener(a->{
 			switchPanel("Final");
-			finalvendapanel.Novo(cliente, data.getList(new ArrayList<ProdVenda>()));
+			finalvendapanel.Novo(data.getList(new ArrayList<ProdVenda>()));
 		});
 		
 		
 		bottommenu.add(finalizarvenda);
 
-		mainpanelright.add(Box.createVerticalGlue());
 		
-		mainpanelright.add(totallabel);
-		
-		mainpanelright.add(Box.createVerticalGlue());
 	}
 
 	public void updateTotal() {
@@ -239,15 +180,7 @@ public class VendaPanel extends JPanel {
 			ProdVenda p=(ProdVenda)o;
 			total+=p.getTotal();
 		}
-		totallabel.setText("R$ "+String.format("%.2f",total));
-	}
-	
-	public void confirmarCliente(Cliente c) {
-		if(c!=null) {
-			cliente=c;
-			clientelabel.setText(cliente.toString());
-		}
-		sairCliente();
+		totallabel.setText("Total: R$ "+String.format("%.2f",total));
 	}
 	
 	public void removeProduto() {
@@ -279,8 +212,6 @@ public class VendaPanel extends JPanel {
 	}
 	
 	public void iniciarVenda() {
-		cliente=null;
-		clientelabel.setText("Sem Cliente");
 		data.clear();
 		switchPanel("Venda");
 	}

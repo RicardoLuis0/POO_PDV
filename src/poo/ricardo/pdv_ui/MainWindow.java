@@ -4,18 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import poo.ricardo.pdv_ui.menu.MainMenu;
 import poo.ricardo.pdv_ui.tabs.LoginPanel;
 import poo.ricardo.pdv_ui.tabs.MainPanel;
 import poo.ricardo.pdv_ui.tabs.VendaPanel;
 import poo.ricardo.pdv_ui.utils.AcessoBanco;
-import poo.ricardo.pdv_ui.utils.BancoTeste;
+import poo.ricardo.pdv_ui.utils.BancoConnect;
 import poo.ricardo.pdv_ui.utils.CallOnCancel;
-import poo.ricardo.pdv_ui.utils.LoginData;
 
 public class MainWindow extends JFrame {
 
@@ -36,9 +33,12 @@ public class MainWindow extends JFrame {
 		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 		
-		banco = new BancoTeste();
+		banco=new BancoConnect();
 		
 		setLayout(new BorderLayout());
 		setSize(800,600);
@@ -49,7 +49,6 @@ public class MainWindow extends JFrame {
 		add(menu,BorderLayout.NORTH);
 
 		panelvenda = new VendaPanel(banco,new CallOnCancel(){
-
 			@Override
 			public void cancel() {
 				sairVenda();
@@ -78,14 +77,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void login() {
-		LoginData d=loginscreen.getData();
-		loginscreen.clear();
-		if(banco.testLogin(d)) {
-			menu.login();
-			loginSwitcherLayout.show(loginSwitcher, "Main");
-		}else {
-			JOptionPane.showMessageDialog(this, "Login ou Senha errados", "Erro Ao Logar", JOptionPane.ERROR_MESSAGE);
-		}
+		menu.login();
+		loginSwitcherLayout.show(loginSwitcher, "Main");
 	}
 	
 	public void logoff() {

@@ -1,6 +1,8 @@
 package poo.ricardo.pdv_ui.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -33,7 +35,7 @@ public class ProdutoPanel extends JPanel {
 	public ProdutoPanel(AcessoBanco banco,CallOnConfirm call_confirm,CallOnCancel call_cancel){
 		super();
 		this.banco=banco;
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		scrollfill = new JPanel(new BorderLayout());
 		confirmar = new JButton("Confirmar");
 		cancelar = new JButton("Cancelar");
@@ -42,17 +44,26 @@ public class ProdutoPanel extends JPanel {
 		listaProdutos = new JList<Produto>(data);
 		spinner_model=new SpinnerNumberModel(1, 1, 999, 1);
 		amt_spinner=new JSpinner(spinner_model);
+		
+		amt_spinner.setMinimumSize(new Dimension(100, 20));
+		amt_spinner.setPreferredSize(new Dimension(100, 20));
+		amt_spinner.setMaximumSize(new Dimension(100, 20));
+		confirmar.setAlignmentX(CENTER_ALIGNMENT);
+		cancelar.setAlignmentX(CENTER_ALIGNMENT);
+		
 		scroll = new JScrollPane(listaProdutos);
 		scrollfill.add(scroll,BorderLayout.CENTER);
 		menupanel=new JPanel();
-		menupanel.setLayout(new BoxLayout(menupanel, BoxLayout.Y_AXIS));
+		menupanel.setLayout(new BoxLayout(menupanel, BoxLayout.X_AXIS));
+		
 		add(scrollfill);
 		add(menupanel);
-		
+
+		menupanel.add(Box.createHorizontalGlue());
 		menupanel.add(amt_spinner);
 		menupanel.add(confirmar);
 		menupanel.add(cancelar);
-		menupanel.add(Box.createVerticalGlue());
+		menupanel.add(Box.createHorizontalGlue());
 		
 		confirmar.addActionListener(a->{
 			int index=listaProdutos.getSelectedIndex();
