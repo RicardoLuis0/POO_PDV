@@ -6,16 +6,16 @@ import java.util.List;
 import java.lang.Math;
 
 public class BancoTeste implements AcessoBanco{
-	private HashMap<String,Produto> bancoProdutos = null;
-	private HashMap<String,Cliente> bancoClientes = null;
+	private HashMap<Integer,Produto> bancoProdutos = null;
+	private HashMap<Integer,Cliente> bancoClientes = null;
 	public BancoTeste() {
-		bancoProdutos = new HashMap<String,Produto>();
-		bancoClientes = new HashMap<String,Cliente>();
+		bancoProdutos = new HashMap<Integer,Produto>();
+		bancoClientes = new HashMap<Integer,Cliente>();
 		for(int i=0;i<1000;i++) {
-			bancoProdutos.put(Integer.toString(i),new Produto(i,"Produto"+i,Math.random()*100));
+			bancoProdutos.put(i,new Produto(i,"Produto"+i,Math.random()*100));
 		}
 		for(int i=0;i<100;i++) {
-			bancoClientes.put(Integer.toString(i),new Cliente(Integer.toString(i),"Cliente"+i));
+			bancoClientes.put(i,new Cliente(i,"Cliente"+i));
 		}
 	}
 
@@ -25,7 +25,7 @@ public class BancoTeste implements AcessoBanco{
 	}
 
 	@Override
-	public Produto procurarProduto(String codigo) {
+	public Produto procurarProduto(int codigo) {
 		return bancoProdutos.get(codigo);
 	}
 
@@ -35,7 +35,7 @@ public class BancoTeste implements AcessoBanco{
 	}
 
 	@Override
-	public Cliente procurarCliente(String codigo) {
+	public Cliente procurarCliente(int codigo) {
 		return bancoClientes.get(codigo);
 	}
 

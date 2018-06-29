@@ -1,13 +1,13 @@
 package poo.ricardo.pdv_ui.utils;
 
 public class Cliente{
-	private String codigo;
+	private int codigo;
 	private String name;
-	public Cliente(String cod,String n) {
+	public Cliente(int cod,String n) {
 		codigo=cod;
 		name=n;
 	}
-	public String getCodigo() {
+	public int getCodigo() {
 		return codigo;
 	}
 	public String getName() {

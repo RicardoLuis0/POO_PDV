@@ -63,7 +63,7 @@ public class ClientPanel extends JPanel {
 	public void Novo() {
 		refreshJList();
 	}
-	public void Editar(String cod) {
+	public void Editar(int cod) {
 		refreshJList();
 		int codindex=-1;
 		for(int i=0;i<data.getSize();i++) {
